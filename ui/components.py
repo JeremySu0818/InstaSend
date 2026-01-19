@@ -33,7 +33,6 @@ class ProfileDialog(QDialog):
         self.tabs.addTab(self.tab_message, "發送訊息")
         self.tabs.addTab(self.tab_settings, "發送設定")
 
-        # === 基本資料分頁 ===
         layout_basic = QFormLayout()
         self.edit_name = QLineEdit()
         self.edit_username = QLineEdit()
@@ -55,11 +54,10 @@ class ProfileDialog(QDialog):
         layout_basic.addRow("設定檔名稱 *", self.edit_name)
         layout_basic.addRow("Instagram 帳號 *", self.edit_username)
         layout_basic.addRow("Instagram 密碼 *", pw_layout)
-        layout_basic.addRow("目標用戶 (User ID) *", self.edit_target)  # Updated label
+        layout_basic.addRow("目標用戶 (User ID) *", self.edit_target)
         layout_basic.addRow("備註說明", self.edit_note)
         self.tab_basic.setLayout(layout_basic)
 
-        # === 發送訊息分頁 ===
         layout_msg = QVBoxLayout()
         self.edit_message = QTextEdit()
         self.edit_message.setPlaceholderText("請輸入要發送的訊息（多行可循環發送）")
@@ -67,7 +65,6 @@ class ProfileDialog(QDialog):
         layout_msg.addWidget(self.edit_message)
         self.tab_message.setLayout(layout_msg)
 
-        # === 發送設定分頁 ===
         layout_send = QFormLayout()
         self.combo_mode = QComboBox()
         self.combo_mode.addItems(["發送單條", "發送多條", "無限發送"])
@@ -95,7 +92,6 @@ class ProfileDialog(QDialog):
         layout_send.addRow("最大間隔", self.spin_interval_max)
         self.tab_settings.setLayout(layout_send)
 
-        # === 底部按鈕列 ===
         self.button_box = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel
         )
@@ -107,7 +103,6 @@ class ProfileDialog(QDialog):
         main_layout.addWidget(self.button_box)
         self.setLayout(main_layout)
 
-        # 連動控制
         self.combo_mode.currentIndexChanged.connect(self.on_mode_change)
         self.combo_interval_mode.currentIndexChanged.connect(
             self.on_interval_mode_change
@@ -127,7 +122,7 @@ class ProfileDialog(QDialog):
             self.toggle_password_btn.setText("顯示")
 
     def on_mode_change(self):
-        mode_index = self.combo_mode.currentIndex()  # 0:單條, 1:多條, 2:無限
+        mode_index = self.combo_mode.currentIndex()
         show_count = mode_index == 1
         self.spin_count.setVisible(show_count)
         label = self.tab_settings.layout().labelForField(self.spin_count)
@@ -215,7 +210,7 @@ class ProfileDialog(QDialog):
             "section": self.edit_name.text().strip(),
             "username": self.edit_username.text().strip(),
             "password": self.edit_password.text().strip(),
-            "target_user": self.edit_target.text().strip(),  # This is actually target
+            "target_user": self.edit_target.text().strip(),
             "dm_note": self.edit_note.text().strip(),
             "message": message_text,
             "send_mode": mode_val,

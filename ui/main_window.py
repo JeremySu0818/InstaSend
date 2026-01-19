@@ -1,4 +1,5 @@
 # ui/main_window.py
+
 import time
 from PyQt5.QtWidgets import (
     QWidget,
@@ -12,7 +13,6 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QSize, QSettings
 from PyQt5.QtGui import QIcon
-
 from utils.system import resource_path
 from ui.styles import QSS_STYLE
 from ui.components import ProfileDialog
@@ -27,7 +27,6 @@ class DMWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        # time.sleep(0.1) # Removed unnecessary sleep
         self.setWindowIcon(QIcon(resource_path("icon.ico")))
         self.status = self.STATUS_IDLE
         self.setWindowTitle("InstaSend (Instagrapi Edition)")
@@ -82,9 +81,7 @@ class DMWindow(QWidget):
         self.btn_resume.clicked.connect(self.resume_dm)
         self.btn_stop.clicked.connect(self.stop_dm)
 
-        # ----- 初始化 QSettings -----
         self.settings = QSettings("MyCompany", "InstaSend")
-
         self.profile_names = []
         self.refresh_profiles()
         self.active_thread = None
@@ -99,7 +96,6 @@ class DMWindow(QWidget):
             self.settings.beginGroup(name)
             note = self.settings.value("dm_note", "")
             self.settings.endGroup()
-
             display = name if not note else f"{name}（{note}）"
             self.profile_list.addItem(display)
         self.update_buttons()
@@ -123,13 +119,11 @@ class DMWindow(QWidget):
             if name in self.settings.childGroups():
                 QMessageBox.warning(self, "名稱重複", "此名稱已存在。")
                 return
-
             self.settings.beginGroup(name)
             for key, value in d.items():
                 if key != "section":
                     self.settings.setValue(key, value)
             self.settings.endGroup()
-
             self.refresh_profiles()
 
     def edit_profile(self):
@@ -137,14 +131,12 @@ class DMWindow(QWidget):
         if not section:
             QMessageBox.information(self, "請先選擇", "請點選要編輯的設定檔。")
             return
-
         profile_data = {}
         self.settings.beginGroup(section)
         for key in self.settings.childKeys():
             profile_data[key] = self.settings.value(key)
         self.settings.endGroup()
         profile_data["section"] = section
-
         dialog = ProfileDialog(self, profile_data=profile_data, title="編輯設定檔")
         if dialog.exec_():
             d2 = dialog.get_profile()
@@ -162,19 +154,16 @@ class DMWindow(QWidget):
             ):
                 QMessageBox.warning(self, "欄位不完整", "請輸入所有必填欄位。")
                 return
-
             if new_section != section:
                 if new_section in self.settings.childGroups():
                     QMessageBox.warning(self, "名稱重複", "新的名稱已存在。")
                     return
                 self.settings.remove(section)
-
             self.settings.beginGroup(new_section)
             for key, value in d2.items():
                 if key != "section":
                     self.settings.setValue(key, value)
             self.settings.endGroup()
-
             self.refresh_profiles()
 
     def del_profile(self):
@@ -200,13 +189,11 @@ class DMWindow(QWidget):
         if self.active_thread and self.active_thread.isRunning():
             QMessageBox.warning(self, "進程已啟動", "請先停止現有進程。")
             return
-
         profile_data = {}
         self.settings.beginGroup(section)
         for key in self.settings.childKeys():
             profile_data[key] = self.settings.value(key)
         self.settings.endGroup()
-
         self.active_profile = profile_data
         self.active_thread = SendDMThread(profile_data)
         self.active_thread.status_signal.connect(self.status_label.setText)
@@ -250,15 +237,10 @@ class DMWindow(QWidget):
         has_sel = self.profile_list.currentRow() >= 0
         is_running = self.status == self.STATUS_RUNNING
         is_paused = self.status == self.STATUS_PAUSED
-
-        # Management
         self.btn_new.setEnabled(not is_running and not is_paused)
         self.btn_edit.setEnabled(has_sel and not is_running and not is_paused)
         self.btn_del.setEnabled(has_sel and not is_running and not is_paused)
         self.profile_list.setEnabled(not is_running and not is_paused)
-
-        # Control
-        # Send enable if idle and selected
         self.btn_send.setEnabled(has_sel and self.status == self.STATUS_IDLE)
         self.btn_pause.setEnabled(is_running)
         self.btn_resume.setEnabled(is_paused)
