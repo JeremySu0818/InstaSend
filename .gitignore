@@ -7,3 +7,6 @@
 
 # PyCache
 __pycache__/
+
+# session files
+/sessions
