@@ -4,6 +4,7 @@
 # Pyinstaller
 /dist
 /build
+*.spec
 
 # PyCache
 __pycache__/
