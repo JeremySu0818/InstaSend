@@ -33,7 +33,9 @@ class SendDMThread(QThread):
         username = self.profile["username"]
         password = self.profile["password"]
         target_input = self.profile.get("target_user", "")
-        session_folder = "sessions"
+        session_folder = os.path.expandvars(
+            os.path.join("%USERPROFILE%", "InstaSend", "sessions")
+        )
         ensure_directory(session_folder)
         session_file = os.path.join(session_folder, f"{username}_session.json")
         self.cl = Client()
