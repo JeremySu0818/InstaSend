@@ -11,3 +11,6 @@ __pycache__/
 
 # session files
 /sessions
+
+# exe
+*.exe
