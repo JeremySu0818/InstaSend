@@ -3,6 +3,8 @@ setlocal enabledelayedexpansion
 
 echo [*] Starting build process for InstaSend...
 echo [*] Building InstaSend.exe...
+echo.
+
 uv run pyinstaller ^
     --noconfirm ^
     --onefile ^
@@ -13,4 +15,14 @@ uv run pyinstaller ^
     --name "InstaSend" ^
     InstaSend.py
 
-pause    
+echo.
+echo [*] Building Inno Setup script...
+echo.
+
+iscc "installer.iss"
+
+echo.
+echo [*] Build completed successfully
+echo.
+
+pause
